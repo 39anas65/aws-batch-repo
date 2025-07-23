@@ -68,12 +68,12 @@ jobs:
   install-requirements:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: cache dependencies
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          key: deps-pip-${{ hashFiles('**/requirements.txt') }}
       - name: Install dependencies
         run: pip install -r requirements.txt
