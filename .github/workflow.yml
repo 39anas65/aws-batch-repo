@@ -1,0 +1,79 @@
+name: Copy of Test Sequential jobs
+on: 
+  push:
+    branches:
+     - main
+    #paths:
+    #  - files/*
+  workflow_dispatch:
+jobs: 
+  first-event:
+    runs-on: ubuntu-latest
+    steps:
+      - name: create 1st dummy event
+        run: python -c "print('One-liner inline Python')"
+
+  subsequent-event:
+    needs: first-event
+    runs-on: ubuntu-latest
+    steps:
+      - name: complete program
+        id: notify 
+        run: echo "Program execution Completed!"
+
+  inspect-context-objects:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: github context inspection
+        run: echo "${{ github.repository }}"
+      - name: check step details
+        run: echo "${{ steps.notify.outputs }}"
+      - name: MultiLine execution
+        run: |
+          mkdir htt
+          cd htt
+          echo $PATH >> output.txt
+      - name: Download Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: output-Artifacts
+          path: htt/output.txt
+          
+  download-artifact-job:
+    needs: inspect-context-objects
+    runs-on: ubuntu-latest
+    steps:
+      - name: create a download directory
+        run: mkdir downloads
+      - name: Get output files
+        uses: actions/download-artifact@v4
+        with:
+          name: output-Artifacts
+          path: downloads
+      - name: list directory
+        run: |
+          ls
+          ls downloads
+      - name: list contents of output
+        id: file_content
+        run: echo "file-output=$(cat downloads/output.txt)" >> $GITHUB_OUTPUT
+
+  check-outputs-job:
+    needs: download-artifact-job
+    runs-on: ubuntu-latest
+    steps:
+      - name: retrieve output
+        run: echo "${{ steps.file_content.outputs.file-output }}"
+
+  install-requirements:
+    runs-on: ubuntu-latest
+    steps:
+      - name: cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install dependencies
+        run: pip install -r requirements.txt

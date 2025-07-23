@@ -1,0 +1,29 @@
+{
+    "jobName": "fix_bugs_test_2",
+    "jobQueue": "queue_for_aws_batch_exp",
+    "jobDefinition": "aws_batch_job_definition:2",
+    "containerOverrides": {
+        "environment": [
+            {
+                "name": "save_name",
+                "value": "fix_bugs_test_2"
+            },
+            {
+                "name": "var_a",
+                "value": "6"
+            },
+            {
+                "name": "var_b",
+                "value": "12"
+            },
+            {
+                "name": "AWS_ACCESS_KEY_ID",
+                "value": "AKIA3MFWVIPLLZJYW46M"
+            },
+            {
+                "name": "AWS_SECRET_ACCESS_KEY",
+                "value": "oLb6XRoedHTZaOimxyzSBTo/CJsTlzUVJwmBCUN8"
+            }
+        ]
+    }
+}
